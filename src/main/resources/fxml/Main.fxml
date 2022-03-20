@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0"
+            prefWidth="250.0" xmlns="http://javafx.com/javafx/8.0.999-ea" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.jvan100.sharedclipboard.controllers.MainController">
+    <VBox prefHeight="200.0" prefWidth="250.0">
+        <HBox alignment="CENTER" prefHeight="80.0" prefWidth="250.0">
+            <Label fx:id="hostAddressLabel">
+                <font>
+                    <Font size="22.0"/>
+                </font>
+            </Label>
+        </HBox>
+        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+            <TextField fx:id="addressField" alignment="CENTER" prefHeight="25.0" prefWidth="100.0"/>
+            <Button mnemonicParsing="false" onMouseClicked="#connectToTarget"
+                    text="Connect"/>
+        </HBox>
+    </VBox>
+</AnchorPane>
