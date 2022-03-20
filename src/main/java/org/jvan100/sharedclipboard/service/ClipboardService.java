@@ -27,7 +27,10 @@ public class ClipboardService {
         if (clipboard.hasString()) {
             final String newContent = clipboard.getString();
 
-            return (!oldContent.equals(newContent)) ? newContent : null;
+            if (!oldContent.equals(newContent)) {
+                oldContent = newContent;
+                return oldContent;
+            }
         }
 
         return null;
