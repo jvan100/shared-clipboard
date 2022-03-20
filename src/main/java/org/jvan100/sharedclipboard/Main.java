@@ -30,7 +30,7 @@ public class Main extends Application {
         final AnchorPane root = loader.load();
         final MainController controller = loader.getController();
 
-        final ServerService serverService = new ServerService(8080);
+        final ServerService serverService = new ServerService(16000);
 
         primaryStage.setScene(new Scene(root));
         primaryStage.setOnCloseRequest(windowEvent -> {
@@ -43,7 +43,7 @@ public class Main extends Application {
 
         final ClipboardService clipboardService = controller.getClipboardService();
 
-        final Timeline clipboardChange = new Timeline(new KeyFrame(Duration.millis(200), actionEvent -> {
+        final Timeline clipboardChange = new Timeline(new KeyFrame(Duration.millis(500), actionEvent -> {
             synchronized (clipboardService) {
                 final Clipboard clipboard = clipboardService.getClipboard();
 

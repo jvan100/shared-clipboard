@@ -1,11 +1,9 @@
 package org.jvan100.sharedclipboard.service;
 
-import javafx.scene.input.Clipboard;
 import org.jvan100.sharedclipboard.ServiceList;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 

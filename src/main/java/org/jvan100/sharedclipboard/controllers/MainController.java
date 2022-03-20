@@ -33,7 +33,7 @@ public class MainController {
 
     @FXML
     private void connectToTarget() {
-        final ClientService clientService = new ClientService(addressField.getText(), 8080, serviceList, clipboardService);
+        final ClientService clientService = new ClientService(addressField.getText(), 16000, serviceList, clipboardService);
         final Thread clientServiceThread = new Thread(clientService);
         clientServiceThread.start();
     }
