@@ -22,6 +22,7 @@ public class Main extends Application {
         final MainController controller = loader.getController();
 
         primaryStage.setScene(new Scene(root));
+        primaryStage.setTitle("Shared Clipboard");
         primaryStage.setOnCloseRequest(windowEvent -> controller.shutdownServices());
         primaryStage.show();
     }
