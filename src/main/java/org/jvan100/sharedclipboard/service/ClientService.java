@@ -27,12 +27,12 @@ public class ClientService implements Runnable {
 
     public void run() {
         try {
-            System.out.printf("Trying to connect to: %s\n", address);
+//            System.out.printf("Trying to connect to: %s\n", address);
 
             socket = new Socket();
             socket.connect(new InetSocketAddress(address, port), 5000);
 
-            System.out.println("Connected");
+//            System.out.println("Connected");
 
             synchronized (serviceList) {
                 serviceList.addService(this);
@@ -47,8 +47,8 @@ public class ClientService implements Runnable {
             }
 
             socket.close();
-        } catch (IOException | ClassNotFoundException e) {
-            System.out.println("Could not connect");
+        } catch (IOException | ClassNotFoundException ignored) {
+            System.out.println("Connection ended");
         }
     }
 

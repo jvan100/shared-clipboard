@@ -30,11 +30,11 @@ public class ServerService implements Runnable {
             Socket clientSocket;
 
             while (!shutdown) {
-                System.out.println("Listening for incoming connections...");
+//                System.out.println("Listening for incoming connections...");
 
                 clientSocket = serverSocket.accept();
 
-                System.out.printf("--> Connection to client (%s) has been established.\n", clientSocket.getInetAddress().getHostAddress());
+//                System.out.printf("--> Connection to client (%s) has been established.\n", clientSocket.getInetAddress().getHostAddress());
 
                 synchronized (sockets) {
                     sockets.add(clientSocket);
@@ -52,11 +52,11 @@ public class ServerService implements Runnable {
                 }
             } catch (IOException ignored) {}
         }
-        System.out.println("here");
+//        System.out.println("here");
     }
 
     public void sendMessage(String message) {
-        System.out.println("Sending message: " + message);
+//        System.out.println("Sending message: " + message);
 
         try {
             synchronized (sockets) {
