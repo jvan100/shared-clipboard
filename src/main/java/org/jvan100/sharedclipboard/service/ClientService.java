@@ -42,6 +42,7 @@ public class ClientService implements Runnable {
 
             while (!shutdown) {
                 final String message = (String) ois.readObject();
+                System.out.println(message);
                 clipboardService.setClipboard(message);
             }
 

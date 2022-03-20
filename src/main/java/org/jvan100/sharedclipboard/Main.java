@@ -44,18 +44,10 @@ public class Main extends Application {
         final ClipboardService clipboardService = controller.getClipboardService();
 
         final Timeline clipboardChange = new Timeline(new KeyFrame(Duration.millis(500), actionEvent -> {
-            synchronized (clipboardService) {
-                final Clipboard clipboard = clipboardService.getClipboard();
+            final String message = clipboardService.getUpdate();
 
-                if (clipboard.hasString()) {
-                    final String newContent = clipboard.getString();
-
-                    if (!prevContent.equals(newContent)) {
-                        serverService.sendMessage(newContent);
-                        prevContent = newContent;
-                    }
-                }
-            }
+            if (message != null)
+                serverService.sendMessage(message);
         }));
 
         clipboardChange.setCycleCount(Animation.INDEFINITE);
