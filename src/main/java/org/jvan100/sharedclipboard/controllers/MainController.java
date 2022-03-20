@@ -32,12 +32,16 @@ public class MainController {
     @FXML
     private TextField addressField;
 
+    @FXML
+    private Label notificationLabel;
+
     public MainController() {
         this.connectionsList = new ConnectionsList();
         this.clipboardService = new ClipboardService();
-        this.serverConnectionService = new ServerConnectionService(port, connectionsList, clipboardService);
-        this.clientConnectionService = new ClientConnectionService(port, connectionsList, clipboardService);
+        this.serverConnectionService = new ServerConnectionService(port, connectionsList, clipboardService, this::setNotification);
+        this.clientConnectionService = new ClientConnectionService(port, connectionsList, clipboardService, this::setNotification);
         this.broadcastService = new BroadcastService(connectionsList, clipboardService);
+
         this.timer = new Timer();
 
         startServices();
@@ -51,7 +55,10 @@ public class MainController {
         new Thread(serverConnectionService).start();
 
         Platform.runLater(() -> timer.schedule(broadcastService, 0, updatePeriod));
-        System.out.println("Broadcast service running...");
+    }
+
+    public void setNotification(String notification) {
+        Platform.runLater(() -> notificationLabel.setText(notification));
     }
 
     @FXML
@@ -63,7 +70,6 @@ public class MainController {
     public void shutdownServices() {
         serverConnectionService.shutdown();
         timer.cancel();
-        System.out.println("Broadcast service terminated.");
 
         try {
             synchronized (connectionsList) {

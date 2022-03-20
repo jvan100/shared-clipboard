@@ -1,5 +1,6 @@
 package org.jvan100.sharedclipboard.service;
 
+import org.jvan100.sharedclipboard.interfaces.ConnectionCallback;
 import org.jvan100.sharedclipboard.util.Connection;
 import org.jvan100.sharedclipboard.util.ConnectionsList;
 
@@ -13,13 +14,15 @@ public class ClientConnectionService implements Runnable {
     private final int port;
     private final ConnectionsList connectionsList;
     private final ClipboardService clipboardService;
+    private final ConnectionCallback callback;
 
     private final int timeout = 2000;
 
-    public ClientConnectionService(int port, ConnectionsList connectionsList, ClipboardService clipboardService) {
+    public ClientConnectionService(int port, ConnectionsList connectionsList, ClipboardService clipboardService, ConnectionCallback callback) {
         this.port = port;
         this.connectionsList = connectionsList;
         this.clipboardService = clipboardService;
+        this.callback = callback;
     }
 
     public void setAddress(String address) {
@@ -27,8 +30,6 @@ public class ClientConnectionService implements Runnable {
     }
 
     public void run() {
-        System.out.println("Client connection service running...");
-
         try {
             final Socket socket = new Socket();
             socket.connect(new InetSocketAddress(address, port), timeout);
@@ -36,11 +37,11 @@ public class ClientConnectionService implements Runnable {
             final Connection connection = new Connection(socket);
             connectionsList.addConnection(connection);
 
-            new Thread(new ReceiveService(connection, clipboardService)).start();
+            new Thread(new ReceiveService(connection, clipboardService, callback)).start();
 
-            System.out.println("Client connection successful.");
+            callback.execute("Connection successful.");
         } catch (IOException ignored) {
-            System.out.println("Client connection unsuccessful.");
+            callback.execute("Connection failed.");
         }
     }
 

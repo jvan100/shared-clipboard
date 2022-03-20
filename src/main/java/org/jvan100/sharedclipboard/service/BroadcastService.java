@@ -27,8 +27,6 @@ public class BroadcastService extends TimerTask {
         }
 
         if (message != null) {
-            System.out.printf("Broadcasting message: %s\n", message);
-
             try {
                 synchronized (connectionsList) {
                     for (final Connection connection : connectionsList.getConnections()) {

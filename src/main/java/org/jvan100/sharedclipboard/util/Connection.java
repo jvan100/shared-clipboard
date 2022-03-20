@@ -17,6 +17,10 @@ public class Connection {
         this.ois = new ObjectInputStream(socket.getInputStream());
     }
 
+    public Socket getSocket() {
+        return socket;
+    }
+
     public String readMessage() throws IOException, ClassNotFoundException {
         return (String) ois.readObject();
     }

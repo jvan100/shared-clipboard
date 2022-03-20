@@ -1,5 +1,6 @@
 package org.jvan100.sharedclipboard.service;
 
+import org.jvan100.sharedclipboard.interfaces.ConnectionCallback;
 import org.jvan100.sharedclipboard.util.Connection;
 
 import java.io.IOException;
@@ -8,15 +9,15 @@ public class ReceiveService implements Runnable {
 
     private final Connection connection;
     private final ClipboardService clipboardService;
+    private final ConnectionCallback callback;
 
-    public ReceiveService(Connection connection, ClipboardService clipboardService) {
+    public ReceiveService(Connection connection, ClipboardService clipboardService, ConnectionCallback callback) {
         this.connection = connection;
         this.clipboardService = clipboardService;
+        this.callback = callback;
     }
 
     public void run() {
-        System.out.println("Receive service running...");
-
         try {
             String message;
 
@@ -25,7 +26,7 @@ public class ReceiveService implements Runnable {
                 clipboardService.setClipboard(message);
             }
         } catch (IOException | ClassNotFoundException ignored) {
-            System.out.println("Receive service unable to receive message.");
+            callback.execute(String.format("Connection to (%s) lost.", connection.getSocket().getInetAddress().getHostAddress()));
         }
     }
 
