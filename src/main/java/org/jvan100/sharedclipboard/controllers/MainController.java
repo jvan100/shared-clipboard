@@ -1,20 +1,30 @@
 package org.jvan100.sharedclipboard.controllers;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import org.jvan100.sharedclipboard.ServiceList;
-import org.jvan100.sharedclipboard.service.ClientService;
-import org.jvan100.sharedclipboard.service.ClipboardService;
+import org.jvan100.sharedclipboard.util.Connection;
+import org.jvan100.sharedclipboard.util.ConnectionsList;
+import org.jvan100.sharedclipboard.service.*;
 
 import java.io.IOException;
 import java.net.InetAddress;
+import java.util.Timer;
 
 public class MainController {
 
-    private final ClipboardService clipboardService;
+    private final int port = 16000;
+    private final int updatePeriod = 1000;
 
-    private final ServiceList<ClientService> serviceList;
+    private final ConnectionsList connectionsList;
+
+    private final ClipboardService clipboardService;
+    private final ServerConnectionService serverConnectionService;
+    private final ClientConnectionService clientConnectionService;
+    private final BroadcastService broadcastService;
+
+    private final Timer timer;
 
     @FXML
     private Label hostAddressLabel;
@@ -23,30 +33,44 @@ public class MainController {
     private TextField addressField;
 
     public MainController() {
+        this.connectionsList = new ConnectionsList();
         this.clipboardService = new ClipboardService();
-        this.serviceList = new ServiceList<>();
+        this.serverConnectionService = new ServerConnectionService(port, connectionsList, clipboardService);
+        this.clientConnectionService = new ClientConnectionService(port, connectionsList, clipboardService);
+        this.broadcastService = new BroadcastService(connectionsList, clipboardService);
+        this.timer = new Timer();
+
+        startServices();
     }
 
     public void initialize() throws IOException {
         hostAddressLabel.setText(InetAddress.getLocalHost().getHostAddress());
     }
 
-    @FXML
-    private void connectToTarget() {
-        final ClientService clientService = new ClientService(addressField.getText(), 16000, serviceList, clipboardService);
-        final Thread clientServiceThread = new Thread(clientService);
-        clientServiceThread.start();
+    public void startServices() {
+        new Thread(serverConnectionService).start();
+
+        Platform.runLater(() -> timer.schedule(broadcastService, 0, updatePeriod));
+        System.out.println("Broadcast service running...");
     }
 
-    public ClipboardService getClipboardService() {
-        return clipboardService;
+    @FXML
+    private void connectToTarget() {
+        clientConnectionService.setAddress(addressField.getText());
+        new Thread(clientConnectionService).start();
     }
 
     public void shutdownServices() {
-        synchronized (serviceList) {
-            for (final ClientService clientService : serviceList.getServices())
-                clientService.shutdown();
-        }
+        serverConnectionService.shutdown();
+        timer.cancel();
+        System.out.println("Broadcast service terminated.");
+
+        try {
+            synchronized (connectionsList) {
+                for (final Connection connection : connectionsList.getConnections())
+                    connection.close();
+            }
+        } catch (IOException ignored) {}
     }
 
 }

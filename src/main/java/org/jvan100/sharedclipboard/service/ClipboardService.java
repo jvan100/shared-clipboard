@@ -4,6 +4,8 @@ import javafx.application.Platform;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 public class ClipboardService {
 
     private volatile Clipboard clipboard;
@@ -24,16 +26,20 @@ public class ClipboardService {
     }
 
     public synchronized String getUpdate() {
-        if (clipboard.hasString()) {
-            final String newContent = clipboard.getString();
+        AtomicReference<String> toReturn = new AtomicReference<>(null);
 
-            if (!oldContent.equals(newContent)) {
-                oldContent = newContent;
-                return oldContent;
+        Platform.runLater(() -> {
+            if (clipboard.hasString()) {
+                final String newContent = clipboard.getString();
+
+                if (!oldContent.equals(newContent)) {
+                    oldContent = newContent;
+                    toReturn.set(oldContent);
+                }
             }
-        }
+        });
 
-        return null;
+        return toReturn.get();
     }
 
 }
