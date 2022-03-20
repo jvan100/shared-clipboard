@@ -4,6 +4,8 @@ import javafx.application.Platform;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class ClipboardService {
@@ -25,21 +27,23 @@ public class ClipboardService {
         oldContent = message;
     }
 
-    public synchronized String getUpdate() {
-        AtomicReference<String> toReturn = new AtomicReference<>(null);
-
-        Platform.runLater(() -> {
+    public synchronized String getUpdate() throws InterruptedException, ExecutionException {
+        final FutureTask<String> task = new FutureTask<>(() -> {
             if (clipboard.hasString()) {
                 final String newContent = clipboard.getString();
 
                 if (!oldContent.equals(newContent)) {
                     oldContent = newContent;
-                    toReturn.set(oldContent);
+                    return oldContent;
                 }
             }
+
+            return null;
         });
 
-        return toReturn.get();
+        Platform.runLater(task);
+
+        return task.get();
     }
 
 }

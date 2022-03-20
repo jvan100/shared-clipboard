@@ -5,6 +5,7 @@ import org.jvan100.sharedclipboard.util.ConnectionsList;
 
 import java.io.IOException;
 import java.util.TimerTask;
+import java.util.concurrent.ExecutionException;
 
 public class BroadcastService extends TimerTask {
 
@@ -17,9 +18,17 @@ public class BroadcastService extends TimerTask {
     }
 
     public void run() {
-        final String message = clipboardService.getUpdate();
+        String message = null;
+
+        try {
+            message = clipboardService.getUpdate();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
 
         if (message != null) {
+            System.out.printf("Broadcasting message: %s\n", message);
+
             try {
                 synchronized (connectionsList) {
                     for (final Connection connection : connectionsList.getConnections()) {
